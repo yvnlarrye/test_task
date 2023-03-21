@@ -1,10 +1,12 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String expr = "I / 5";
-//        System.out.println(calc(expr));
-        System.out.println(IntegerConverter.intToRoman(765));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String expr = reader.readLine();
+        System.out.println(calc(expr));
     }
 
     public static String calc(String input) throws Exception {
@@ -13,24 +15,37 @@ public class Main {
             String fstOperand = expr[0];
             String sndOperand = expr[2];
             String operator = expr[1];
+
             try {
                 int fst = Integer.parseInt(fstOperand);
-            } catch (NumberFormatException e) {
-                IntegerConverter.intToRoman(56);
-            }
+                if (fst < 1 || fst > 10) throw new Exception();
 
-         } else {
+                int snd = Integer.parseInt(sndOperand);
+                if (snd < 1 || snd > 10) throw new Exception();
+
+                return String.valueOf(count(fst, snd, operator));
+
+            } catch (NumberFormatException e1) {
+                if (RomanNumber.numbers.containsKey(fstOperand)) {
+                    try {
+                        Integer.parseInt(sndOperand);
+                        throw new Exception();
+                    } catch (NumberFormatException e2) {
+                        if (RomanNumber.numbers.containsKey(sndOperand)) {
+                            int tempResult = count(
+                                    RomanNumber.numbers.get(fstOperand),
+                                    RomanNumber.numbers.get(sndOperand),
+                                    operator);
+                            if (tempResult > 0) {
+                                return IntegerConverter.intToRoman(tempResult);
+                            } else throw new Exception();
+                        } else throw new Exception();
+                    }
+                } else throw new Exception();
+            }
+        } else {
             throw new Exception();
         }
-
-
-
-
-
-        int result = count(Integer.parseInt(fstOperand), Integer.parseInt(sndOperand), operator);
-
-        return String.valueOf(result);
-
     }
 
     public static int count(int num1, int num2, String operator) throws Exception {
@@ -49,22 +64,21 @@ public class Main {
 
 }
 
-enum RomanNumber {
-    I("1"), II("2"), III("3"), IV("4"), V("5"),
-    VI("6"), VII("7"), VIII("8"), IX("9"), X("10");
+class RomanNumber {
 
-    private final String value;
+    public final static Map<String, Integer> numbers = new HashMap<>();
 
-    RomanNumber(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    static boolean isRomanNumber(String number) {
-        if ()
+    static {
+        numbers.put("I", 1);
+        numbers.put("II", 2);
+        numbers.put("III", 3);
+        numbers.put("IV", 4);
+        numbers.put("V", 5);
+        numbers.put("VI", 6);
+        numbers.put("VII", 7);
+        numbers.put("VIII", 8);
+        numbers.put("IX", 9);
+        numbers.put("X", 10);
     }
 
 }
@@ -72,7 +86,7 @@ enum RomanNumber {
 class IntegerConverter {
 
     public static String intToRoman(int number) {
-        if (number >= 4000 || number <= 0)
+        if (number > 100 || number < 0)
             return null;
         StringBuilder result = new StringBuilder();
         for(Integer key : units.descendingKeySet()) {
@@ -87,10 +101,6 @@ class IntegerConverter {
     private static final NavigableMap<Integer, String> units;
     static {
         NavigableMap<Integer, String> initMap = new TreeMap<>();
-        initMap.put(1000, "M");
-        initMap.put(900, "CM");
-        initMap.put(500, "D");
-        initMap.put(400, "CD");
         initMap.put(100, "C");
         initMap.put(90, "XC");
         initMap.put(50, "L");
