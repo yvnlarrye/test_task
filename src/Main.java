@@ -7,7 +7,9 @@ public class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String expr = reader.readLine();
         System.out.println(calc(expr));
+        reader.close();
     }
+
 
     public static String calc(String input) throws Exception {
         String[] expr = input.split(" ");
